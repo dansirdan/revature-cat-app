@@ -3,12 +3,58 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { authContext } from "../contexts/AuthContext";
+import { useHistory } from "react-router-dom";
 
-export const LoginForm = ({ history }) => {
+export const LogoutForm = () => {
+  const history = useHistory();
+
+  const { setAuthData } = useContext(authContext);
+
+  const onFormSubmit = e => {
+    e.preventDefault();
+    setAuthData(null);
+    history.replace("/");
+  };
+  return (
+    <form
+      id='login-form'
+      style={{ width: "80%" }}
+      noValidate
+      autoComplete='off'
+      onSubmit={onFormSubmit}>
+      <Grid
+        direction='row'
+        container
+        justify='center'
+        alignContent='center'
+        spacing={2}>
+        <Grid item xs={12}>
+          <Typography variant='h4' component='h1'>
+            Are you sure you want to logout?
+          </Typography>
+          <br />
+          <Divider />
+        </Grid>
+        <Grid container item justify='flex-end' alignItems='center'>
+          <Button
+            type='submit'
+            variant='contained'
+            color='default'
+            endIcon={<Icon>send</Icon>}>
+            Logout
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
+  );
+}
+
+export const LoginForm = () => {
+  const history = useHistory();
+
   const { setAuthData } = useContext(authContext);
 
   const [loginFormData, setLoginFormData] = useState({
@@ -23,12 +69,22 @@ export const LoginForm = ({ history }) => {
   let usernameErrMessage = "Please enter a username.";
   let passwordErrMessage = "Please enter a password.";
 
+  const handleInputChange = event => {
+    setLoginFormData({
+      ...loginFormData,
+      [event.target.id]: event.target.value,
+    });
+    setLoginFormErrors({
+      ...loginFormErrors,
+      [event.target.id]: false,
+    });
+  };
   const onFormSubmit = e => {
     e.preventDefault();
     // TODO: handle login Auth
     console.log(loginFormData);
     setAuthData(loginFormData.username);
-    history.replace(`/users/${loginFormData.username}`);
+    history.replace(`/users/${loginFormData.username}`)
   };
 
   return (
@@ -38,13 +94,18 @@ export const LoginForm = ({ history }) => {
       noValidate
       autoComplete='off'
       onSubmit={onFormSubmit}>
-                <Grid direction='row' container spacing={2}>
+      <Grid
+        direction='row'
+        container
+        justify='center'
+        alignContent='center'
+        spacing={2}>
         <Grid item xs={12}>
-          <Typography variant='h2' component='h3' className={classes.header}>
-            Create an account
+          <Typography variant='h2' component='h3'>
+            Login
           </Typography>
-          <Divider />
           <br />
+          <Divider />
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -80,12 +141,23 @@ export const LoginForm = ({ history }) => {
             variant='outlined'
           />
         </Grid>
+        <Grid container item justify='flex-end' alignItems='flex-end'>
+          <Button
+            type='submit'
+            variant='contained'
+            color='default'
+            endIcon={<Icon>send</Icon>}>
+            Login
+          </Button>
+        </Grid>
       </Grid>
-      </form>
+    </form>
   );
 };
 
-export const SignUpForm = ({ history }) => {
+export const SignUpForm = () => {
+  const history = useHistory();
+
   const { setAuthData } = useContext(authContext);
 
   const [signUpFormData, setSignUpFormData] = useState({
@@ -95,17 +167,17 @@ export const SignUpForm = ({ history }) => {
   });
 
   const [signUpFormErrors, setSignUpFormErrors] = useState({
-    usernameErr: "",
-    passwordErr: "",
-    passCheckErr: "",
+    usernameErr: false,
+    passwordErr: false,
+    passCheckErr: false,
   });
 
-  let usernameErrMessage = "Username must be at least 8 characters long."
+  let usernameErrMessage = "Username must be at least 8 characters long.";
 
   const handleInputChange = event => {
     setSignUpFormData({
       ...signUpFormData,
-      [event.target.id]: event.target.vaule,
+      [event.target.id]: event.target.value,
     });
 
     setSignUpFormErrors({
@@ -122,6 +194,8 @@ export const SignUpForm = ({ history }) => {
     // IF password contains Aa1!
     // IF passcheck is the same as password
 
+    setAuthData(signUpFormData.username);
+    history.replace("/users")
   };
 
   return (
@@ -133,11 +207,11 @@ export const SignUpForm = ({ history }) => {
       onSubmit={onFormSubmit}>
       <Grid direction='row' container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant='h2' component='h3' className={classes.header}>
+          <Typography variant='h2' component='h3'>
             Create an account
           </Typography>
-          <Divider />
           <br />
+          <Divider />
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -164,7 +238,11 @@ export const SignUpForm = ({ history }) => {
             id='password'
             label='Password'
             placeholder='Super!secret12'
-            helperText={signUpFormErrors.passwordErr ? "Password must be at least 8 characters long, and contain lowercase, uppercase, speacial, and numeric characters." : " "}
+            helperText={
+              signUpFormErrors.passwordErr
+                ? "Password must be at least 8 characters long, and contain lowercase, uppercase, speacial, and numeric characters."
+                : " "
+            }
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
@@ -181,7 +259,9 @@ export const SignUpForm = ({ history }) => {
             id='passCheck'
             label='Confirm Password'
             placeholder='Super!secret12'
-            helperText={signUpFormErrors.passCheckErr ? "Passwords do not match." : " "}
+            helperText={
+              signUpFormErrors.passCheckErr ? "Passwords do not match." : " "
+            }
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
@@ -189,6 +269,15 @@ export const SignUpForm = ({ history }) => {
             }}
             variant='outlined'
           />
+        </Grid>
+        <Grid container item justify='flex-end' alignItems='flex-end'>
+          <Button
+            type='submit'
+            variant='contained'
+            color='default'
+            endIcon={<Icon>send</Icon>}>
+            Submit
+          </Button>
         </Grid>
       </Grid>
     </form>

@@ -6,12 +6,17 @@ import "./App.css";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import { CssBaseline } from "@material-ui/core";
+import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui/core/styles';
+
+let theme = createMuiTheme();
+theme = responsiveFontSizes(theme);
 
 function App() {
   return (
     <React.Fragment>
       <CssBaseline />
       <Router>
+      <ThemeProvider theme={theme}>
         <div className='wrapper'>
           <Nav />
           <Switch>
@@ -22,6 +27,7 @@ function App() {
           </Switch>
           <Footer />
         </div>
+        </ThemeProvider>
       </Router>
     </React.Fragment>
   );

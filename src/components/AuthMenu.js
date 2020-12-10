@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MenuItem from "@material-ui/core/MenuItem";
 import { authContext } from "../contexts/AuthContext";
 import AuthModal from "./AuthModal";
@@ -12,7 +12,6 @@ export default function AuthMenu() {
   const [authType, setAuthType] = useState("");
   const { auth } = useContext(authContext);
 
-
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
   };
@@ -21,15 +20,15 @@ export default function AuthMenu() {
     setAnchorEl(null);
   };
 
-  const handleAuthChoice = (type) => {
-      setAnchorEl(null);
-      setShow(true);
-      setAuthType(type);
-  }
+  const handleAuthChoice = type => {
+    setAnchorEl(null);
+    setShow(true);
+    setAuthType(type);
+  };
 
   const handleModalClose = () => {
-      setShow(false);
-  }
+    setShow(false);
+  };
 
   return (
     <div>
@@ -37,8 +36,8 @@ export default function AuthMenu() {
         aria-controls='auth-menu'
         aria-haspopup='true'
         onClick={handleClick}>
-        <ExpandMoreIcon/>
-        Account 
+        <ExpandMoreIcon />
+        Account
       </Button>
       <Menu
         id='auth-menu'
@@ -46,11 +45,17 @@ export default function AuthMenu() {
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}>
-        <MenuItem onClick={()=> handleAuthChoice("signup")}>Sign Up</MenuItem>
         {auth.data ? (
-          <MenuItem onClick={()=> handleAuthChoice("logout")}>Logout</MenuItem>
+          ""
         ) : (
-          <MenuItem onClick={()=> handleAuthChoice("login")}>Login</MenuItem>
+          <MenuItem onClick={() => handleAuthChoice("signup")}>
+            Sign Up
+          </MenuItem>
+        )}
+        {auth.data ? (
+          <MenuItem onClick={() => handleAuthChoice("logout")}>Logout</MenuItem>
+        ) : (
+          <MenuItem onClick={() => handleAuthChoice("login")}>Login</MenuItem>
         )}
       </Menu>
       <AuthModal

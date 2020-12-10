@@ -6,13 +6,14 @@ import Backdrop from "@material-ui/core/Backdrop";
 import { IconButton } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import Grid from "@material-ui/core/Grid";
+import { LoginForm, SignUpForm, LogoutForm } from "./AuthForms";
 
 const useStyles = makeStyles(theme => ({
   modal: {
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
-    margin: 25
+    margin: 25,
   },
   paper: {
     width: "60%",
@@ -31,6 +32,19 @@ const AuthModal = props => {
   const classes = useStyles();
   const { showModal, handleModalClose, authType } = props;
 
+  const renderAuthForm = () => {
+    switch (authType) {
+      case "signup":
+        return <SignUpForm />;
+      case "logout":
+        return <LogoutForm />;
+      case "login":
+        return <LoginForm />;
+      default:
+        return <div>Err</div>;
+    }
+  };
+
   return (
     <Modal
       aria-labelledby='transition-modal-title'
@@ -45,11 +59,7 @@ const AuthModal = props => {
       }}>
       <Fade in={showModal}>
         <div className={classes.paper}>
-          <Grid
-            container
-            direction='column'
-            justify='center'
-            alignItems='center'>
+          <Grid container direction='row' justify='center' alignItems='center'>
             <Grid container item justify='flex-end' xs={12}>
               <IconButton
                 edge='end'
@@ -60,10 +70,9 @@ const AuthModal = props => {
                 <Close />
               </IconButton>
             </Grid>
-            <Grid item xs={12}>
-              {authType}
+            <Grid item xs={12} container justify='center' alignContent='center'>
+              {renderAuthForm()}
             </Grid>
-            <Grid item xs={12}></Grid>
           </Grid>
         </div>
       </Fade>

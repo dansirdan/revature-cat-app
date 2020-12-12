@@ -17,6 +17,7 @@ function Home() {
   };
 
   return (
+    <div className="page-body-content">
     <Container
       maxWidth='md'
       style={{
@@ -115,6 +116,7 @@ function Home() {
         handleModalClose={handleModalClose}
       />
     </Container>
+    </div>
   );
 }
 

@@ -14,15 +14,15 @@ function Cats() {
   const [focusCat, setFocusCat] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [catData, setCatData] = useState([
-    { name: "Fluffy", breed: "maine coon", color: "grey" },
-    { name: "Simon", breed: "tabby", color: "orange" },
-    { name: "Freya", breed: "ragdoll", color: "white" },
+    { name: "Fluffy", breed: "maine coon", color: "Gray" },
+    { name: "Simon", breed: "tabby", color: "Orange" },
+    { name: "Freya", breed: "ragdoll", color: "White" },
   ]);
 
   const [filteredCatData, setFilteredCatData] = useState([
-    { name: "Fluffy", breed: "maine coon", color: "grey" },
-    { name: "Simon", breed: "tabby", color: "orange" },
-    { name: "Freya", breed: "ragdoll", color: "white" },
+    { name: "Fluffy", breed: "maine coon", color: "Gray" },
+    { name: "Simon", breed: "tabby", color: "Orange" },
+    { name: "Freya", breed: "ragdoll", color: "White" },
   ]);
 
   useEffect(() => {}, []);

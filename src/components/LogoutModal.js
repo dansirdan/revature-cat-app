@@ -60,7 +60,7 @@ const AuthModal = (props) => {
               </IconButton>
             </Grid>
             <Grid item xs={12} container justify="center" alignContent="center">
-              <LogoutForm />
+              <LogoutForm handleModalClose={handleModalClose}/>
             </Grid>
           </Grid>
         </div>

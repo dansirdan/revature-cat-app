@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { authContext } from "../contexts/AuthContext";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import { Divider, Paper } from "@material-ui/core";
+import Divider from "@material-ui/core/Divider";
+import Paper from "@material-ui/core/Paper";
 import { NavLink } from "react-router-dom";
 
 function Home() {
@@ -31,7 +32,7 @@ function Home() {
             >
               <Grid>
                 {/* TODO: CAT ICON LIKE GITHUB */}
-                CAT ICON HERE
+                TODO: CAT ICON HERE
               </Grid>
               <Grid>
                 <br />

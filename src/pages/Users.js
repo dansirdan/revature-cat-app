@@ -3,9 +3,10 @@ import { authContext } from "../contexts/AuthContext";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import { Divider, Paper } from "@material-ui/core";
+import Divider from "@material-ui/core/Divider";
 import { NavLink } from "react-router-dom";
 import Button from "@material-ui/core/Button";
+
 function Users() {
   const { auth } = useContext(authContext);
 

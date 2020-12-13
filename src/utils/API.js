@@ -5,7 +5,7 @@ export default {
     getOwners: function(){
         return axios.get(`${this.baseURL}/owner`);
     },
-    getOwnersByUsername: function(username) {
+    getOwnerByUsername: function(username) {
         return axios.get(`${this.baseURL}/owner?username=${username}`);
     },
     updateOwnerByUsername: function(username, userObj) {

@@ -5,131 +5,169 @@ import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
-import { useHistory } from "react-router-dom";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import API from "../../utils/API";
+import { authContext } from "../../contexts/AuthContext";
 
 export const CatCreateForm = () => {
+  const { auth } = useContext(authContext);
+
   const [createCatData, setCreateCatData] = useState({
     name: "",
     color: "",
     breed: "",
   });
 
-  const [createCatDataErrors, setCreateCatDataErrors] = useState({
-    nameErr: false,
-    colorErr: false,
-    breedErr: false,
-  });
+  const [nameErr, setNameErr] = useState(false);
+  const [colorErr, setColorErr] = useState(false);
+  const [breedErr, setBreedErr] = useState(false);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     setCreateCatData({
       ...createCatData,
       [event.target.id]: event.target.value,
     });
 
-    setCreateCatDataErrors({
-      ...createCatDataErrors,
-      [event.target.id]: false,
-    });
+    switch (event.target.id) {
+      case "name":
+        setNameErr(false);
+        break;
+      case "color":
+        setColorErr(false);
+        break;
+      case "breed":
+        setBreedErr(false);
+        break;
+
+      default:
+        break;
+    }
   };
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = e => {
     e.preventDefault();
 
-    console.log(createCatData);
+    if (createCatData.name.length <= 0) {
+      setNameErr(true);
+    }
+
+    if (createCatData.color === "") {
+      setColorErr(true);
+    }
+
+    if (createCatData.breed.length <= 0) {
+      setBreedErr(true);
+    }
+
+    if (
+      createCatData.name.length > 0 &&
+      createCatData.color !== "" &&
+      createCatData.breed.length > 0
+    ) {
+      API.createCat({
+        name: createCatData.name,
+        ownerName: auth.data,
+        color: createCatData.color,
+        breed: createCatData.breed,
+        imageURL: createCatData.color,
+      })
+        .then(res => {
+          console.log("All good");
+          resetForm();
+          console.log(res);
+        })
+        .catch(err => console.log(err));
+    }
+  };
+
+  const resetForm = () => {
+    document.getElementById("create-cat-form").reset();
   };
 
   return (
     <form
-      id="create-cat-form"
+      id='create-cat-form'
       style={{ width: "80%", margin: "auto" }}
       noValidate
-      autoComplete="off"
-      onSubmit={onFormSubmit}
-    >
+      autoComplete='off'
+      onSubmit={onFormSubmit}>
       <Grid
-        direction="row"
-        justify="center"
-        alignContent="center"
+        direction='row'
+        justify='center'
+        alignContent='center'
         container
-        spacing={2}
-      >
+        spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Add a new cat to your collection
           </Typography>
           <Divider />
         </Grid>
         <Grid item xs={12} md={4}>
           <TextField
-            margin="dense"
-            size="small"
-            error={createCatDataErrors.nameErr}
-            id="name"
-            label="name"
-            placeholder=""
-            helperText={
-              createCatDataErrors.nameErr
-                ? "Please enter your cat's name."
-                : " "
-            }
+            margin='dense'
+            size='small'
+            error={nameErr}
+            id='name'
+            label='Cat Name'
+            placeholder=''
+            helperText={nameErr ? "Please enter your cat's name." : " "}
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
               shrink: true,
             }}
-            variant="outlined"
+            variant='outlined'
           />
         </Grid>
         <Grid item xs={12} md={4}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={createCatDataErrors.colorErr}
-            id="color"
-            label="Cat Color"
-            placeholder=""
-            helperText={
-              createCatDataErrors.colorErr
-                ? "Please enter your cat's coat color."
-                : " "
-            }
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
+          <FormControl variant='outlined' error={colorErr} fullWidth>
+            <InputLabel htmlFor='color'>Cat Color</InputLabel>
+            <Select
+              native
+              label='Cat Color'
+              value={createCatData.color}
+              onChange={handleInputChange}
+              inputProps={{
+                name: "color-selector",
+                id: "color",
+              }}>
+              <option aria-label='None' value='' />
+              <option value={"Black"}>Black</option>
+              <option value={"Brown"}>Brown</option>
+              <option value={"Calico"}>Calico</option>
+              <option value={"Gray"}>Gray</option>
+              <option value={"Orange"}>Orange</option>
+              <option value={"White"}>White</option>
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item xs={12} md={4}>
           <TextField
-            margin="dense"
-            size="small"
-            error={createCatDataErrors.breedErr}
-            id="breed"
-            label="Cat Breed"
-            placeholder=""
-            helperText={
-              createCatDataErrors.breedErr
-                ? "Please enter your cat's breed."
-                : " "
-            }
+            margin='dense'
+            size='small'
+            error={breedErr}
+            id='breed'
+            label='Cat Breed'
+            placeholder=''
+            helperText={breedErr ? "Please enter your cat's breed." : " "}
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
               shrink: true,
             }}
-            variant="outlined"
+            variant='outlined'
           />
         </Grid>
-        <Grid container item justify="flex-end" alignItems="flex-end">
+        <Grid container item justify='flex-end' alignItems='flex-end'>
           <Button
-            type="submit"
-            variant="outlined"
-            color="default"
-            endIcon={<Icon>add</Icon>}
-          >
-            Submit
+            type='submit'
+            variant='outlined'
+            color='default'
+            endIcon={<Icon>add</Icon>}>
+            Create
           </Button>
         </Grid>
       </Grid>
@@ -139,120 +177,155 @@ export const CatCreateForm = () => {
 
 export const CatEditForm = ({ selectedCat }) => {
   const [editFormData, setEditFormData] = useState({
-    name: "",
-    color: "",
-    breed: "",
+    name: selectedCat.name,
+    color: selectedCat.color,
+    breed: selectedCat.breed,
   });
 
-  const [editFormErrors, setEditFormErrors] = useState({
-    nameErr: false,
-    colorErr: false,
-    breedErr: false,
-  });
+  const [nameErr, setNameErr] = useState(false);
+  const [colorErr, setColorErr] = useState(false);
+  const [breedErr, setBreedErr] = useState(false);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     setEditFormData({
       ...editFormData,
       [event.target.id]: event.target.value,
     });
 
-    setEditFormErrors({
-      ...editFormErrors,
-      [event.target.id]: false,
-    });
+    switch (event.target.id) {
+      case "name":
+        setNameErr(false);
+        break;
+      case "color":
+        setColorErr(false);
+        break;
+      case "breed":
+        setBreedErr(false);
+        break;
+
+      default:
+        break;
+    }
   };
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = e => {
     e.preventDefault();
 
-    // IF name is long enough
-    // IF name is already taken
-    // IF color contains Aa1!
-    // IF breed is the same as color
+    if (editFormData.name.length <= 0) {
+      setNameErr(true);
+    }
+
+    if (editFormData.color === "") {
+      setColorErr(true);
+    }
+
+    if (editFormData.breed.length <= 0) {
+      setBreedErr(true);
+    }
+
+    if (
+      editFormData.name.length > 0 &&
+      editFormData.color !== "" &&
+      editFormData.breed.length > 0
+    ) {
+      API.updateCatByUID(selectedCat.UID, {
+        name: editFormData.name,
+        ownerName: auth.data,
+        color: editFormData.color,
+        breed: editFormData.breed,
+        imageURL: editFormData.color,
+      })
+        .then(res => {
+          console.log(res);
+          resetForm();
+        })
+        .catch(err => console.log(err));
+    }
+  };
+
+  const resetForm = () => {
+    document.getElementById("edit-cat-form").reset();
   };
 
   return (
     <form
-      id="edit-cat-form"
+      id='edit-cat-form'
       style={{ width: "80%", margin: "auto" }}
       noValidate
-      autoComplete="off"
-      onSubmit={onFormSubmit}
-    >
-      <Grid direction="row" container spacing={2}>
+      autoComplete='off'
+      onSubmit={onFormSubmit}>
+      <Grid direction='row' container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Edit your cat, {selectedCat.name}
           </Typography>
           <Divider />
         </Grid>
         <Grid item xs={12} md={4}>
           <TextField
-            margin="dense"
-            size="small"
-            error={editFormErrors.nameErr}
-            id="name"
-            label="Cat Name"
+            margin='dense'
+            size='small'
+            error={nameErr}
+            id='name'
+            label='Cat Name'
+            value={editFormData.name}
             placeholder={selectedCat.name}
-            helperText={
-              editFormErrors.nameErr ? "Please enter your cat's name." : " "
-            }
+            helperText={nameErr ? "Please enter your cat's name." : " "}
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
               shrink: true,
             }}
-            variant="outlined"
+            variant='outlined'
           />
         </Grid>
         <Grid item xs={12} md={4}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={editFormErrors.colorErr}
-            id="color"
-            label="Cat Color"
-            placeholder={selectedCat.color}
-            helperText={
-              editFormErrors.colorErr
-                ? "Please enter your cat's coat color."
-                : " "
-            }
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
+          <FormControl variant='outlined' error={colorErr} fullWidth>
+            <InputLabel htmlFor='color'>Cat Color</InputLabel>
+            <Select
+              native
+              label='Cat Color'
+              value={editFormData.color}
+              onChange={handleInputChange}
+              inputProps={{
+                name: "color-selector",
+                id: "color",
+              }}>
+              <option aria-label='None' value='' />
+              <option value={"Black"}>Black</option>
+              <option value={"Brown"}>Brown</option>
+              <option value={"Calico"}>Calico</option>
+              <option value={"Gray"}>Gray</option>
+              <option value={"Orange"}>Orange</option>
+              <option value={"White"}>White</option>
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item xs={12} md={4}>
           <TextField
-            margin="dense"
-            size="small"
-            error={editFormErrors.breedErr}
-            id="breed"
-            label="Cat Breed"
+            margin='dense'
+            size='small'
+            error={breedErr}
+            id='breed'
+            label='Cat Breed'
+            value={editFormData.breed}
             placeholder={selectedCat.breed}
-            helperText={
-              editFormErrors.breedErr ? "Please enter your cat's breed." : " "
-            }
+            helperText={breedErr ? "Please enter your cat's breed." : " "}
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
               shrink: true,
             }}
-            variant="outlined"
+            variant='outlined'
           />
         </Grid>
-        <Grid container item justify="flex-end" alignItems="flex-end">
+        <Grid container item justify='flex-end' alignItems='flex-end'>
           <Button
-            type="submit"
-            variant="outlined"
-            color="default"
-            endIcon={<Icon>send</Icon>}
-          >
-            Submit
+            type='submit'
+            variant='outlined'
+            color='default'
+            endIcon={<Icon>save</Icon>}>
+            Save
           </Button>
         </Grid>
       </Grid>

@@ -1,34 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
-import { Typography } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 import CatNav from "../components/CatNav";
 import CatTable from "../components/CatTable";
 import { CatCreateForm, CatEditForm } from "../components/forms/CatForms";
 import DeleteConfirm from "../components/DeleteConfirm";
+import API from "../utils/API";
+import { authContext } from "../../contexts/AuthContext";
 
 function Cats() {
+  const { auth } = useContext(authContext);
+
   const [searchText, setSearchText] = useState("");
   const [managerMode, setManagerMode] = useState("table");
   const [deleteCat, setDeleteCat] = useState("");
   const [focusCat, setFocusCat] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [catData, setCatData] = useState([
-    { name: "Fluffy", breed: "maine coon", color: "grey" },
-    { name: "Simon", breed: "tabby", color: "orange" },
-    { name: "Freya", breed: "ragdoll", color: "white" },
+    { name: "Fluffy", breed: "maine coon", color: "Gray" },
+    { name: "Simon", breed: "tabby", color: "Orange" },
+    { name: "Freya", breed: "ragdoll", color: "White" },
   ]);
 
   const [filteredCatData, setFilteredCatData] = useState([
-    { name: "Fluffy", breed: "maine coon", color: "grey" },
-    { name: "Simon", breed: "tabby", color: "orange" },
-    { name: "Freya", breed: "ragdoll", color: "white" },
+    { name: "Fluffy", breed: "maine coon", color: "Gray" },
+    { name: "Simon", breed: "tabby", color: "Orange" },
+    { name: "Freya", breed: "ragdoll", color: "White" },
   ]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    API.getCatsByUsername(auth.data)
+      .then(res => {
+        console.log(res);
+        // setCatData(res.data);
+      })
+      .catch(err => console.log(err));
+  }, []);
+
   const handleModalClose = () => {
     setShowModal(false);
   };
+
   const changeManagerMode = (mode, editCat) => {
     if (mode === "table") {
       setFilteredCatData(catData);
@@ -47,15 +60,19 @@ function Cats() {
     setManagerMode(mode);
   };
 
-  const handleDelete = (catUID) => {
-    console.log(catUID);
+  const handleDelete = catUID => {
+    API.deleteCatByUID(catUID)
+      .then(res => console.log(res))
+      .catch(err => {
+        console.log(err);
+      });
   };
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const search = e.target.value.toLowerCase();
     setSearchText(search);
     let filterCat = filteredCatData.filter(
-      (cat) =>
+      cat =>
         cat.name.toLowerCase().includes(search) ||
         cat.breed.toLowerCase().includes(search) ||
         cat.color.toLowerCase().includes(search)
@@ -86,25 +103,23 @@ function Cats() {
   };
 
   return (
-    <div className="page-body-content">
+    <div className='page-body-content'>
       <Container
-        maxWidth="md"
+        maxWidth='md'
         style={{
           padding: 20,
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "center",
-        }}
-      >
+        }}>
         <Grid
           container
-          direction="row"
-          justify="center"
-          alignItems="center"
-          item
-        >
+          direction='row'
+          justify='center'
+          alignItems='center'
+          item>
           <Grid item>
-            <Typography variant="h2" component="h1">
+            <Typography variant='h2' component='h1'>
               Cat Manager
             </Typography>
           </Grid>
@@ -123,7 +138,7 @@ function Cats() {
         <DeleteConfirm
           showModal={showModal}
           handleModalClose={handleModalClose}
-          deleteMode="cat"
+          deleteMode='cat'
           handleDelete={handleDelete}
           deleteWhere={deleteCat}
         />

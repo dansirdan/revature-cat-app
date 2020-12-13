@@ -7,48 +7,60 @@ import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { authContext } from "../../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
+import API from "../../utils/API";
 
-export const LogoutForm = () => {
+export const LogoutForm = ({ handleModalClose }) => {
   const history = useHistory();
 
   const { setAuthData } = useContext(authContext);
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = e => {
     e.preventDefault();
     setAuthData(null);
+    handleModalClose();
     history.replace("/");
   };
+
   return (
     <form
-      id="login-form"
+      id='login-form'
       style={{ width: "80%" }}
       noValidate
-      autoComplete="off"
-      onSubmit={onFormSubmit}
-    >
+      autoComplete='off'
+      onSubmit={onFormSubmit}>
       <Grid
-        direction="row"
+        direction='row'
         container
-        justify="center"
-        alignContent="center"
-        spacing={2}
-      >
+        justify='center'
+        alignContent='center'
+        spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h4" component="h1">
+          <Typography variant='h4' component='h1'>
             Are you sure you want to logout?
           </Typography>
           <br />
           <Divider />
         </Grid>
-        <Grid container item justify="flex-end" alignItems="center">
-          <Button
-            type="submit"
-            variant="contained"
-            color="default"
-            endIcon={<Icon>send</Icon>}
-          >
-            Logout
-          </Button>
+        <Grid container item justify='flex-end' alignItems='center' spacing={2}>
+          <Grid item>
+            <Button
+              type='submit'
+              variant='outlined'
+              color='default'
+              endIcon={<Icon>check</Icon>}>
+              Logout
+            </Button>
+          </Grid>
+
+          <Grid item>
+            <Button
+              onClick={handleModalClose}
+              variant='outlined'
+              color='default'
+              endIcon={<Icon>close</Icon>}>
+              Cancel
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
     </form>
@@ -64,100 +76,134 @@ export const LoginForm = () => {
     username: "",
     password: "",
   });
-  const [loginFormErrors, setLoginFormErrors] = useState({
-    usernameErr: false,
-    passwordErr: false,
-  });
 
-  let usernameErrMessage = "Please enter a username.";
-  let passwordErrMessage = "Please enter a password.";
+  const [usernameErr, setUsernameErr] = useState(false);
+  const [passwordErr, setPasswordErr] = useState(false);
 
-  const handleInputChange = (event) => {
+  const [usernameErrMessage, setUsernameErrMessage] = useState(
+    "Please enter a username"
+  );
+  const [passwordErrMessage, setPasswordErrMessage] = useState(
+    "Please enter a password."
+  );
+
+  const handleInputChange = event => {
     setLoginFormData({
       ...loginFormData,
       [event.target.id]: event.target.value,
     });
-    setLoginFormErrors({
-      ...loginFormErrors,
-      [event.target.id]: false,
-    });
+
+    if (event.target.id === "username") {
+      setUsernameErr(false);
+    } else if (event.target.id === "password") {
+      setPasswordErr(false);
+    }
   };
-  const onFormSubmit = (e) => {
+
+  const onFormSubmit = e => {
     e.preventDefault();
-    // TODO: handle login Auth
-    console.log(loginFormData);
-    setAuthData(loginFormData.username);
-    history.replace(`/users/${loginFormData.username}`);
+    
+    if (loginFormData.username.length < 8) {
+      setUsernameErr(true);
+      setUsernameErrMessage("Username must be at least 8 characters long.")
+    }
+
+    if (loginFormData.password.length < 8) {
+      setPasswordErr(true);
+      setPasswordErrMessage("Password must be at least 8 characters long.")
+    }
+
+    if (
+      loginFormData.username.length >= 8 &&
+      loginFormData.password.length >= 8
+    ) {
+      API.getOwnerByUsername(loginFormData.username)
+        .then(owner => {
+          if (owner.password === loginFormData.password){
+            setAuthData(owner.username);
+            history.replace("/users");
+          } else {
+            setPasswordErr(true);
+            setPasswordErrMessage("Password is incorrect.")
+          }
+        })
+        .catch(err => console.log(err));
+    }
+
   };
 
   return (
-    <form
-      id="login-form"
-      style={{ width: "80%" }}
-      noValidate
-      autoComplete="off"
-      onSubmit={onFormSubmit}
-    >
-      <Grid
-        direction="row"
-        container
-        justify="center"
-        alignContent="center"
-        spacing={2}
-      >
-        <Grid item xs={12}>
-          <Typography variant="h2" component="h3">
-            Login
-          </Typography>
-          <br />
-          <Divider />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={loginFormErrors.usernameErr}
-            id="username"
-            label="Username"
-            placeholder="crazycatguy77"
-            helperText={loginFormErrors.usernameErr ? usernameErrMessage : " "}
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={loginFormErrors.passwordErr}
-            id="password"
-            label="Password"
-            placeholder="Super!secret12"
-            helperText={loginFormErrors.passwordErr ? passwordErrMessage : " "}
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
-        </Grid>
-        <Grid container item justify="flex-end" alignItems="flex-end">
-          <Button
-            type="submit"
-            variant="contained"
-            color="default"
-            endIcon={<Icon>send</Icon>}
-          >
-            Login
-          </Button>
-        </Grid>
+    <Grid container direction='row' justify='center' alignItems='center' item>
+      <Grid item>
+        <form
+          id='login-form'
+          style={{ width: "80%", margin: "auto", marginTop: 30 }}
+          noValidate
+          autoComplete='off'
+          onSubmit={onFormSubmit}>
+          <Grid
+            direction='row'
+            container
+            justify='center'
+            alignContent='center'
+            spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant='h2' component='h3'>
+                Login
+              </Typography>
+              <br />
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin='dense'
+                size='small'
+                error={usernameErr}
+                id='username'
+                label='Username'
+                value={loginFormData.username}
+                placeholder='crazycatguy77'
+                helperText={usernameErr ? usernameErrMessage : " "}
+                fullWidth
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin='dense'
+                size='small'
+                error={passwordErr}
+                type='password'
+                id='password'
+                label='Password'
+                value={loginFormData.password}
+                placeholder=''
+                helperText={passwordErr ? passwordErrMessage : " "}
+                fullWidth
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid container item justify='flex-end' alignItems='flex-end'>
+              <Button
+                type='submit'
+                variant='outlined'
+                color='default'
+                endIcon={<Icon>send</Icon>}>
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Grid>
-    </form>
+    </Grid>
   );
 };
 
@@ -172,27 +218,35 @@ export const SignUpForm = () => {
     passCheck: "",
   });
 
-  const [signUpFormErrors, setSignUpFormErrors] = useState({
-    usernameErr: false,
-    passwordErr: false,
-    passCheckErr: false,
-  });
+  const [usernameErr, setUsernameErr] = useState(false);
+  const [passwordErr, setPasswordErr] = useState(false);
+  const [passCheckErr, setPassCheckErr] = useState(false);
 
   let usernameErrMessage = "Username must be at least 8 characters long.";
 
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     setSignUpFormData({
       ...signUpFormData,
       [event.target.id]: event.target.value,
     });
 
-    setSignUpFormErrors({
-      ...signUpFormErrors,
-      [event.target.id]: false,
-    });
+    switch (event.target.id) {
+      case "username":
+        setUsernameErr(false);
+        break;
+      case "password":
+        setPasswordErr(false);
+        break;
+      case "passCheck":
+        setPassCheckErr(false);
+        break;
+
+      default:
+        break;
+    }
   };
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = e => {
     e.preventDefault();
 
     // IF username is long enough
@@ -200,100 +254,125 @@ export const SignUpForm = () => {
     // IF password contains Aa1!
     // IF passcheck is the same as password
 
-    setAuthData(signUpFormData.username);
-    history.replace("/users");
+    if (signUpFormData.username.length < 8) {
+      setPasswordErr(false);
+    }
+
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+        signUpFormData.password
+      )
+    ) {
+      setPasswordErr(true);
+    }
+
+    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+      signUpFormData.password
+    ) && signUpFormData.username.length >= 8) {
+      API.createOwner({
+
+      }).then(response => {
+        console.log(response);
+
+        setAuthData(signUpFormData.username);
+        history.replace("/users");
+      }).catch(err => console.log(err))
+    }
+
   };
 
   return (
-    <form
-      id="signup-form"
-      style={{ width: "80%" }}
-      noValidate
-      autoComplete="off"
-      onSubmit={onFormSubmit}
-    >
-      <Grid direction="row" container spacing={2}>
-        <Grid item xs={12}>
-          <Typography variant="h2" component="h3">
-            Create an account
-          </Typography>
-          <br />
-          <Divider />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={signUpFormErrors.usernameErr}
-            id="username"
-            label="Username"
-            placeholder="crazycatguy77"
-            helperText={signUpFormErrors.usernameErr ? usernameErrMessage : " "}
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={signUpFormErrors.passwordErr}
-            id="password"
-            label="Password"
-            placeholder="Super!secret12"
-            helperText={
-              signUpFormErrors.passwordErr
-                ? "Password must be at least 8 characters long, and contain lowercase, uppercase, speacial, and numeric characters."
-                : " "
-            }
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={signUpFormErrors.passCheckErr}
-            id="passCheck"
-            label="Confirm Password"
-            placeholder="Super!secret12"
-            helperText={
-              signUpFormErrors.passCheckErr ? "Passwords do not match." : " "
-            }
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
-        </Grid>
-        <Grid container item justify="flex-end" alignItems="flex-end">
-          <Button
-            type="submit"
-            variant="contained"
-            color="default"
-            endIcon={<Icon>send</Icon>}
-          >
-            Submit
-          </Button>
-        </Grid>
+    <Grid container direction='row' justify='center' alignItems='center' item>
+      <Grid item>
+        <form
+          id='login-form'
+          style={{ width: "80%", margin: "auto", marginTop: 30 }}
+          noValidate
+          autoComplete='off'
+          onSubmit={onFormSubmit}>
+          <Grid direction='row' container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant='h2' component='h3'>
+                Create an account
+              </Typography>
+              <br />
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin='dense'
+                size='small'
+                error={usernameErr}
+                id='username'
+                label='Username'
+                value={signUpFormData.username}
+                placeholder='crazycatguy77'
+                helperText={usernameErr ? usernameErrMessage : " "}
+                fullWidth
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin='dense'
+                size='small'
+                error={passwordErr}
+                id='password'
+                label='Password'
+                value={signUpFormData.password}
+                placeholder='Super!secret12'
+                helperText={
+                  passwordErr
+                    ? "Password must be at least 8 characters long, and contain lowercase, uppercase, speacial, and numeric characters."
+                    : " "
+                }
+                fullWidth
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin='dense'
+                size='small'
+                error={passCheckErr}
+                id='passCheck'
+                label='Confirm Password'
+                value={signUpFormData.passCheck}
+                placeholder='Super!secret12'
+                helperText={passCheckErr ? "Passwords do not match." : " "}
+                fullWidth
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid container item justify='flex-end' alignItems='flex-end'>
+              <Button
+                type='submit'
+                variant='outlined'
+                color='default'
+                endIcon={<Icon>send</Icon>}>
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Grid>
-    </form>
+    </Grid>
   );
 };
 
 export const EditForm = () => {
-  const { auth } = useContext(authContext);
   const history = useHistory();
 
   const { setAuthData } = useContext(authContext);
@@ -304,27 +383,35 @@ export const EditForm = () => {
     passCheck: "",
   });
 
-  const [editFormErrors, setEditFormErrors] = useState({
-    usernameErr: false,
-    passwordErr: false,
-    passCheckErr: false,
-  });
+  const [usernameErr, setUsernameErr] = useState(false);
+  const [passwordErr, setPasswordErr] = useState(false);
+  const [passCheckErr, setPassCheckErr] = useState(false);
 
   let usernameErrMessage = "Username must be at least 8 characters long.";
 
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     setEditFormData({
       ...editFormData,
       [event.target.id]: event.target.value,
     });
 
-    setEditFormErrors({
-      ...editFormErrors,
-      [event.target.id]: false,
-    });
+    switch (event.target.id) {
+      case "username":
+        setUsernameErr(false);
+        break;
+      case "password":
+        setPasswordErr(false);
+        break;
+      case "passCheck":
+        setPassCheckErr(false);
+        break;
+
+      default:
+        break;
+    }
   };
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = e => {
     e.preventDefault();
 
     // IF username is long enough
@@ -332,94 +419,119 @@ export const EditForm = () => {
     // IF password contains Aa1!
     // IF passcheck is the same as password
 
-    setAuthData(editFormData.username);
-    history.replace("/users");
+    if (editFormData.username.length < 8) {
+      setPasswordErr(false);
+    }
+
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+        editFormData.password
+      )
+    ) {
+      setPasswordErr(true);
+    }
+
+    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+      editFormData.password
+    ) && editFormData.username.length >= 8) {
+      API.updateOwnerByUsername(editFormData.username, {
+
+      }).then(response => {
+        console.log(response);
+
+        setAuthData(editFormData.username);
+        history.replace("/users");
+      }).catch(err => console.log(err))
+    }
   };
 
   return (
-    <form
-      id="signup-form"
-      style={{ width: "80%" }}
-      noValidate
-      autoComplete="off"
-      onSubmit={onFormSubmit}
-    >
-      <Grid direction="row" container spacing={2}>
-        <Grid item xs={12}>
-          <Typography variant="h2" component="h3">
-            Edit your account
-          </Typography>
-          <br />
-          <Divider />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={editFormErrors.usernameErr}
-            id="username"
-            label="Username"
-            placeholder={auth.data}
-            helperText={editFormErrors.usernameErr ? usernameErrMessage : " "}
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={editFormErrors.passwordErr}
-            id="password"
-            label="Password"
-            placeholder=""
-            helperText={
-              editFormErrors.passwordErr
-                ? "Password must be at least 8 characters long, and contain lowercase, uppercase, speacial, and numeric characters."
-                : " "
-            }
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            size="small"
-            error={editFormErrors.passCheckErr}
-            id="passCheck"
-            label="Confirm Password"
-            placeholder=""
-            helperText={
-              editFormErrors.passCheckErr ? "Passwords do not match." : " "
-            }
-            fullWidth
-            onChange={handleInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            variant="outlined"
-          />
-        </Grid>
-        <Grid container item justify="flex-end" alignItems="flex-end">
-          <Button
-            type="submit"
-            variant="contained"
-            color="default"
-            endIcon={<Icon>send</Icon>}
-          >
-            Submit
-          </Button>
-        </Grid>
+    <Grid container direction='row' justify='center' alignItems='center' item>
+      <Grid item>
+        <form
+          id='login-form'
+          style={{ width: "80%", margin: "auto", marginTop: 30 }}
+          noValidate
+          autoComplete='off'
+          onSubmit={onFormSubmit}>
+          <Grid direction='row' container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant='h2' component='h3'>
+                Edit your account
+              </Typography>
+              <br />
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin='dense'
+                size='small'
+                error={usernameErr}
+                id='username'
+                label='Username'
+                value={editFormData.passCheck}
+                placeholder=''
+                helperText={usernameErr ? usernameErrMessage : " "}
+                fullWidth
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin='dense'
+                size='small'
+                error={passwordErr}
+                id='password'
+                label='Password'
+                value={editFormData.password}
+                placeholder=''
+                helperText={
+                  passwordErr
+                    ? "Password must be at least 8 characters long, and contain lowercase, uppercase, special, and numeric characters."
+                    : " "
+                }
+                fullWidth
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin='dense'
+                size='small'
+                error={passCheckErr}
+                id='passCheck'
+                label='Confirm Password'
+                value={editFormData.passCheck}
+                placeholder=''
+                helperText={passCheckErr ? "Passwords do not match." : " "}
+                fullWidth
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant='outlined'
+              />
+            </Grid>
+            <Grid container item justify='flex-end' alignItems='flex-end'>
+              <Button
+                type='submit'
+                variant='outlined'
+                color='default'
+                endIcon={<Icon>send</Icon>}>
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Grid>
-    </form>
+    </Grid>
   );
 };

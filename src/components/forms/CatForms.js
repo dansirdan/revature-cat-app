@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
@@ -8,8 +8,12 @@ import Icon from "@material-ui/core/Icon";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import API from "../../utils/API";
+import { authContext } from "../../contexts/AuthContext";
 
 export const CatCreateForm = () => {
+  const { auth } = useContext(authContext);
+
   const [createCatData, setCreateCatData] = useState({
     name: "",
     color: "",
@@ -62,9 +66,19 @@ export const CatCreateForm = () => {
       createCatData.color !== "" &&
       createCatData.breed.length > 0
     ) {
-      
-      console.log("All good");
-      resetForm();
+      API.createCat({
+        name: createCatData.name,
+        ownerName: auth.data,
+        color: createCatData.color,
+        breed: createCatData.breed,
+        imageURL: createCatData.color,
+      })
+        .then(res => {
+          console.log("All good");
+          resetForm();
+          console.log(res);
+        })
+        .catch(err => console.log(err));
     }
   };
 
@@ -99,11 +113,7 @@ export const CatCreateForm = () => {
             id='name'
             label='Cat Name'
             placeholder=''
-            helperText={
-              nameErr
-                ? "Please enter your cat's name."
-                : " "
-            }
+            helperText={nameErr ? "Please enter your cat's name." : " "}
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
@@ -113,10 +123,7 @@ export const CatCreateForm = () => {
           />
         </Grid>
         <Grid item xs={12} md={4}>
-          <FormControl
-            variant='outlined'
-            error={colorErr}
-            fullWidth>
+          <FormControl variant='outlined' error={colorErr} fullWidth>
             <InputLabel htmlFor='color'>Cat Color</InputLabel>
             <Select
               native
@@ -145,11 +152,7 @@ export const CatCreateForm = () => {
             id='breed'
             label='Cat Breed'
             placeholder=''
-            helperText={
-              breedErr
-                ? "Please enter your cat's breed."
-                : " "
-            }
+            helperText={breedErr ? "Please enter your cat's breed." : " "}
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
@@ -225,9 +228,18 @@ export const CatEditForm = ({ selectedCat }) => {
       editFormData.color !== "" &&
       editFormData.breed.length > 0
     ) {
-
-      console.log("All good");
-      resetForm();
+      API.updateCatByUID(selectedCat.UID, {
+        name: editFormData.name,
+        ownerName: auth.data,
+        color: editFormData.color,
+        breed: editFormData.breed,
+        imageURL: editFormData.color,
+      })
+        .then(res => {
+          console.log(res);
+          resetForm();
+        })
+        .catch(err => console.log(err));
     }
   };
 
@@ -258,9 +270,7 @@ export const CatEditForm = ({ selectedCat }) => {
             label='Cat Name'
             value={editFormData.name}
             placeholder={selectedCat.name}
-            helperText={
-              nameErr ? "Please enter your cat's name." : " "
-            }
+            helperText={nameErr ? "Please enter your cat's name." : " "}
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{
@@ -270,10 +280,7 @@ export const CatEditForm = ({ selectedCat }) => {
           />
         </Grid>
         <Grid item xs={12} md={4}>
-          <FormControl
-            variant='outlined'
-            error={colorErr}
-            fullWidth>
+          <FormControl variant='outlined' error={colorErr} fullWidth>
             <InputLabel htmlFor='color'>Cat Color</InputLabel>
             <Select
               native
@@ -303,9 +310,7 @@ export const CatEditForm = ({ selectedCat }) => {
             label='Cat Breed'
             value={editFormData.breed}
             placeholder={selectedCat.breed}
-            helperText={
-              breedErr ? "Please enter your cat's breed." : " "
-            }
+            helperText={breedErr ? "Please enter your cat's breed." : " "}
             fullWidth
             onChange={handleInputChange}
             InputLabelProps={{

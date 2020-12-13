@@ -6,9 +6,9 @@ import Backdrop from "@material-ui/core/Backdrop";
 import { IconButton } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import Grid from "@material-ui/core/Grid";
-import { LoginForm, SignUpForm, LogoutForm } from "./AuthForms";
+import { LogoutForm } from "./forms/UserForms";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   modal: {
     display: "flex",
     alignItems: "flex-start",
@@ -28,27 +28,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AuthModal = props => {
+const AuthModal = (props) => {
   const classes = useStyles();
   const { showModal, handleModalClose, authType } = props;
 
-  const renderAuthForm = () => {
-    switch (authType) {
-      case "signup":
-        return <SignUpForm />;
-      case "logout":
-        return <LogoutForm />;
-      case "login":
-        return <LoginForm />;
-      default:
-        return <div>Err</div>;
-    }
-  };
-
   return (
     <Modal
-      aria-labelledby='transition-modal-title'
-      aria-describedby='transition-modal-description'
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       className={classes.modal}
       open={showModal}
       onClose={handleModalClose}
@@ -56,22 +43,24 @@ const AuthModal = props => {
       BackdropComponent={Backdrop}
       BackdropProps={{
         timeout: 500,
-      }}>
+      }}
+    >
       <Fade in={showModal}>
         <div className={classes.paper}>
-          <Grid container direction='row' justify='center' alignItems='center'>
-            <Grid container item justify='flex-end' xs={12}>
+          <Grid container direction="row" justify="center" alignItems="center">
+            <Grid container item justify="flex-end" xs={12}>
               <IconButton
-                edge='end'
+                edge="end"
                 onClick={handleModalClose}
-                color='inherit'
-                size='medium'
-                aria-label='close'>
+                color="inherit"
+                size="medium"
+                aria-label="close"
+              >
                 <Close />
               </IconButton>
             </Grid>
-            <Grid item xs={12} container justify='center' alignContent='center'>
-              {renderAuthForm()}
+            <Grid item xs={12} container justify="center" alignContent="center">
+              <LogoutForm />
             </Grid>
           </Grid>
         </div>

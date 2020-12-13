@@ -4,6 +4,7 @@ import { EditForm } from "../components/forms/UserForms";
 import DeleteConfirm from "../components/DeleteConfirm";
 import { authContext } from "../contexts/AuthContext";
 import { Button } from "@material-ui/core";
+import API from "../utils/API";
 
 const AccountSettings = () => {
   const { auth } = useContext(authContext);
@@ -11,8 +12,13 @@ const AccountSettings = () => {
   const [showModal, setShowModal] = useState(false);
   const [deleteUser, setSeleteUser] = useState("");
 
-  const handleDelete = (userName) => {
+  const handleDelete = userName => {
     console.log(userName);
+    API.deleteOwner(userName)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => console.log(err));
   };
 
   const handleModalClose = () => {
@@ -27,7 +33,7 @@ const AccountSettings = () => {
       <DeleteConfirm
         showModal={showModal}
         handleModalClose={handleModalClose}
-        deleteMode="account"
+        deleteMode='account'
         handleDelete={handleDelete}
         deleteWhere={auth.data}
       />

@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { authContext } from "../../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
+import API from "../../utils/API";
 
 export const LogoutForm = ({ handleModalClose }) => {
   const history = useHistory();
@@ -79,8 +80,12 @@ export const LoginForm = () => {
   const [usernameErr, setUsernameErr] = useState(false);
   const [passwordErr, setPasswordErr] = useState(false);
 
-  let usernameErrMessage = "Please enter a username.";
-  let passwordErrMessage = "Please enter a password.";
+  const [usernameErrMessage, setUsernameErrMessage] = useState(
+    "Please enter a username"
+  );
+  const [passwordErrMessage, setPasswordErrMessage] = useState(
+    "Please enter a password."
+  );
 
   const handleInputChange = event => {
     setLoginFormData({
@@ -94,18 +99,37 @@ export const LoginForm = () => {
       setPasswordErr(false);
     }
   };
+
   const onFormSubmit = e => {
     e.preventDefault();
+    
+    if (loginFormData.username.length < 8) {
+      setUsernameErr(true);
+      setUsernameErrMessage("Username must be at least 8 characters long.")
+    }
 
     if (loginFormData.password.length < 8) {
       setPasswordErr(true);
+      setPasswordErrMessage("Password must be at least 8 characters long.")
     }
 
-    if (loginFormData.username.length < 8) {
-      setPasswordErr(false);
+    if (
+      loginFormData.username.length >= 8 &&
+      loginFormData.password.length >= 8
+    ) {
+      API.getOwnerByUsername(loginFormData.username)
+        .then(owner => {
+          if (owner.password === loginFormData.password){
+            setAuthData(owner.username);
+            history.replace("/users");
+          } else {
+            setPasswordErr(true);
+            setPasswordErrMessage("Password is incorrect.")
+          }
+        })
+        .catch(err => console.log(err));
     }
-    setAuthData(loginFormData.username);
-    history.replace(`/users/${loginFormData.username}`);
+
   };
 
   return (
@@ -216,7 +240,7 @@ export const SignUpForm = () => {
       case "passCheck":
         setPassCheckErr(false);
         break;
-    
+
       default:
         break;
     }
@@ -230,8 +254,31 @@ export const SignUpForm = () => {
     // IF password contains Aa1!
     // IF passcheck is the same as password
 
-    setAuthData(signUpFormData.username);
-    history.replace("/users");
+    if (signUpFormData.username.length < 8) {
+      setPasswordErr(false);
+    }
+
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+        signUpFormData.password
+      )
+    ) {
+      setPasswordErr(true);
+    }
+
+    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+      signUpFormData.password
+    ) && signUpFormData.username.length >= 8) {
+      API.createOwner({
+
+      }).then(response => {
+        console.log(response);
+
+        setAuthData(signUpFormData.username);
+        history.replace("/users");
+      }).catch(err => console.log(err))
+    }
+
   };
 
   return (
@@ -260,9 +307,7 @@ export const SignUpForm = () => {
                 label='Username'
                 value={signUpFormData.username}
                 placeholder='crazycatguy77'
-                helperText={
-                  usernameErr ? usernameErrMessage : " "
-                }
+                helperText={usernameErr ? usernameErrMessage : " "}
                 fullWidth
                 onChange={handleInputChange}
                 InputLabelProps={{
@@ -302,11 +347,7 @@ export const SignUpForm = () => {
                 label='Confirm Password'
                 value={signUpFormData.passCheck}
                 placeholder='Super!secret12'
-                helperText={
-                  passCheckErr
-                    ? "Passwords do not match."
-                    : " "
-                }
+                helperText={passCheckErr ? "Passwords do not match." : " "}
                 fullWidth
                 onChange={handleInputChange}
                 InputLabelProps={{
@@ -332,7 +373,6 @@ export const SignUpForm = () => {
 };
 
 export const EditForm = () => {
-  const { auth } = useContext(authContext);
   const history = useHistory();
 
   const { setAuthData } = useContext(authContext);
@@ -365,7 +405,7 @@ export const EditForm = () => {
       case "passCheck":
         setPassCheckErr(false);
         break;
-    
+
       default:
         break;
     }
@@ -379,8 +419,30 @@ export const EditForm = () => {
     // IF password contains Aa1!
     // IF passcheck is the same as password
 
-    setAuthData(editFormData.username);
-    history.replace("/users");
+    if (editFormData.username.length < 8) {
+      setPasswordErr(false);
+    }
+
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+        editFormData.password
+      )
+    ) {
+      setPasswordErr(true);
+    }
+
+    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+      editFormData.password
+    ) && editFormData.username.length >= 8) {
+      API.updateOwnerByUsername(editFormData.username, {
+
+      }).then(response => {
+        console.log(response);
+
+        setAuthData(editFormData.username);
+        history.replace("/users");
+      }).catch(err => console.log(err))
+    }
   };
 
   return (
@@ -408,10 +470,8 @@ export const EditForm = () => {
                 id='username'
                 label='Username'
                 value={editFormData.passCheck}
-                placeholder=""
-                helperText={
-                  usernameErr ? usernameErrMessage : " "
-                }
+                placeholder=''
+                helperText={usernameErr ? usernameErrMessage : " "}
                 fullWidth
                 onChange={handleInputChange}
                 InputLabelProps={{
@@ -428,11 +488,10 @@ export const EditForm = () => {
                 id='password'
                 label='Password'
                 value={editFormData.password}
-
                 placeholder=''
                 helperText={
                   passwordErr
-                    ? "Password must be at least 8 characters long, and contain lowercase, uppercase, speacial, and numeric characters."
+                    ? "Password must be at least 8 characters long, and contain lowercase, uppercase, special, and numeric characters."
                     : " "
                 }
                 fullWidth
@@ -452,9 +511,7 @@ export const EditForm = () => {
                 label='Confirm Password'
                 value={editFormData.passCheck}
                 placeholder=''
-                helperText={
-                  passCheckErr ? "Passwords do not match." : " "
-                }
+                helperText={passCheckErr ? "Passwords do not match." : " "}
                 fullWidth
                 onChange={handleInputChange}
                 InputLabelProps={{

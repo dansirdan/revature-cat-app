@@ -6,13 +6,13 @@ footer {
   text-align: center;
   position: absolute;
   bottom: 0;
-  /* background-color: #b2ebf2; */
+  /* background-color: #e8b787; */
 }
 
 nav {
   padding: 10px;
   border-bottom: 1px solid black;
-  /* background-color: #80deea; */
+  /* background-color: #e8b787; */
 }
 
 .wrapper {
@@ -27,10 +27,14 @@ nav {
   flex: 1 1 0%;
   padding: 15px;
   margin: 0px 0px 50px 0px;
-  /* background-color: #e0f7fa; */
+  /* background-color: #ffdd9a; */
 }
 
 .copy-right {
   padding: 10px;
   justify-content: center;
+}
+
+button {
+  background-color: #ffdd9a;
 }

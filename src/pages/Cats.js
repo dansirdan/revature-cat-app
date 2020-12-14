@@ -8,7 +8,6 @@ import { CatCreateForm, CatEditForm } from "../components/forms/CatForms";
 import DeleteConfirm from "../components/DeleteConfirm";
 import API from "../utils/API";
 import { authContext } from "../contexts/AuthContext";
-import Fade from "@material-ui/core/Fade";
 
 function Cats() {
   const { auth } = useContext(authContext);
@@ -126,7 +125,6 @@ function Cats() {
           alignItems: "flex-start",
           justifyContent: "center",
         }}>
-        <Fade in={true}>
           <Grid
             container
             direction='row'
@@ -157,7 +155,6 @@ function Cats() {
             handleDelete={handleDelete}
             deleteWhere={deleteCat}
           />
-        </Fade>
       </Container>
     </div>
   );

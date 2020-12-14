@@ -7,7 +7,7 @@ import CatTable from "../components/CatTable";
 import { CatCreateForm, CatEditForm } from "../components/forms/CatForms";
 import DeleteConfirm from "../components/DeleteConfirm";
 import API from "../utils/API";
-import { authContext } from "../../contexts/AuthContext";
+import { authContext } from "../contexts/AuthContext";
 
 function Cats() {
   const { auth } = useContext(authContext);
@@ -17,26 +17,31 @@ function Cats() {
   const [deleteCat, setDeleteCat] = useState("");
   const [focusCat, setFocusCat] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const [catData, setCatData] = useState([
-    { name: "Fluffy", breed: "maine coon", color: "Gray" },
-    { name: "Simon", breed: "tabby", color: "Orange" },
-    { name: "Freya", breed: "ragdoll", color: "White" },
-  ]);
+  const [catData, setCatData] = useState([]);
+  const [filteredCatData, setFilteredCatData] = useState([]);
 
-  const [filteredCatData, setFilteredCatData] = useState([
-    { name: "Fluffy", breed: "maine coon", color: "Gray" },
-    { name: "Simon", breed: "tabby", color: "Orange" },
-    { name: "Freya", breed: "ragdoll", color: "White" },
-  ]);
+  // [
+  //   { name: "Fluffy", breed: "maine coon", color: "Gray" },
+  //   { name: "Simon", breed: "tabby", color: "Orange" },
+  //   { name: "Freya", breed: "ragdoll", color: "White" },
+  // ]
 
   useEffect(() => {
-    API.getCatsByUsername(auth.data)
+    retrieveCats();
+  }, []);
+
+  const retrieveCats = () => {
+    API.getCats()
       .then(res => {
-        console.log(res);
-        // setCatData(res.data);
+        let filteredCats = res.data.filter(cat => cat.ownerName === auth.data);
+        // console.log(filteredCats);
+        setCatData(filteredCats.sort((cat1, cat2) => cat1.uid - cat2.uid));
+        setFilteredCatData(
+          filteredCats.sort((cat1, cat2) => cat1.uid - cat2.uid)
+        );
       })
       .catch(err => console.log(err));
-  }, []);
+  };
 
   const handleModalClose = () => {
     setShowModal(false);
@@ -44,7 +49,7 @@ function Cats() {
 
   const changeManagerMode = (mode, editCat) => {
     if (mode === "table") {
-      setFilteredCatData(catData);
+      retrieveCats();
       setSearchText("");
     }
     if (mode === "edit") {
@@ -62,7 +67,10 @@ function Cats() {
 
   const handleDelete = catUID => {
     API.deleteCatByUID(catUID)
-      .then(res => console.log(res))
+      .then(res => {
+        retrieveCats();
+        // console.log(res);
+      })
       .catch(err => {
         console.log(err);
       });
@@ -96,9 +104,14 @@ function Cats() {
           />
         );
       case "add":
-        return <CatCreateForm />;
+        return <CatCreateForm changeManagerMode={changeManagerMode} />;
       default:
-        return <CatEditForm selectedCat={focusCat} />;
+        return (
+          <CatEditForm
+            changeManagerMode={changeManagerMode}
+            selectedCat={focusCat}
+          />
+        );
     }
   };
 

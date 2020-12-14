@@ -11,7 +11,7 @@ import Select from "@material-ui/core/Select";
 import API from "../../utils/API";
 import { authContext } from "../../contexts/AuthContext";
 
-export const CatCreateForm = () => {
+export const CatCreateForm = ({changeManagerMode}) => {
   const { auth } = useContext(authContext);
 
   const [createCatData, setCreateCatData] = useState({
@@ -74,9 +74,10 @@ export const CatCreateForm = () => {
         imageURL: createCatData.color,
       })
         .then(res => {
-          console.log("All good");
+          // console.log("All good");
           resetForm();
-          console.log(res);
+          changeManagerMode("table");
+          // console.log(res);
         })
         .catch(err => console.log(err));
     }
@@ -175,7 +176,10 @@ export const CatCreateForm = () => {
   );
 };
 
-export const CatEditForm = ({ selectedCat }) => {
+export const CatEditForm = ({ selectedCat, changeManagerMode }) => {
+
+  const { auth } = useContext(authContext);
+
   const [editFormData, setEditFormData] = useState({
     name: selectedCat.name,
     color: selectedCat.color,
@@ -228,16 +232,18 @@ export const CatEditForm = ({ selectedCat }) => {
       editFormData.color !== "" &&
       editFormData.breed.length > 0
     ) {
-      API.updateCatByUID(selectedCat.UID, {
+      API.updateCatByUID({
         name: editFormData.name,
         ownerName: auth.data,
         color: editFormData.color,
         breed: editFormData.breed,
         imageURL: editFormData.color,
+        uid: selectedCat.uid
       })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           resetForm();
+          changeManagerMode("table")
         })
         .catch(err => console.log(err));
     }

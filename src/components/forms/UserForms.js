@@ -118,9 +118,10 @@ export const LoginForm = () => {
       loginFormData.password.length >= 8
     ) {
       API.getOwnerByUsername(loginFormData.username)
-        .then(owner => {
-          if (owner.password === loginFormData.password){
-            setAuthData(owner.username);
+        .then(response => {
+          let user = response.data.username;
+          if (response.data.password === loginFormData.password){
+            setAuthData(user);
             history.replace("/users");
           } else {
             setPasswordErr(true);
@@ -255,26 +256,33 @@ export const SignUpForm = () => {
     // IF passcheck is the same as password
 
     if (signUpFormData.username.length < 8) {
-      setPasswordErr(false);
+      setUsernameErr(true);
+    }
+
+    if (signUpFormData.passCheck !== signUpFormData.password) {
+      setPassCheckErr(true);
     }
 
     if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         signUpFormData.password
       )
     ) {
       setPasswordErr(true);
     }
 
-    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
       signUpFormData.password
-    ) && signUpFormData.username.length >= 8) {
+    ) && signUpFormData.username.length >= 8 && signUpFormData.passCheck === signUpFormData.password) {
       API.createOwner({
-
+        username: signUpFormData.username,
+        password: signUpFormData.password,
+        admin: false,
+        sessionData: ""
       }).then(response => {
-        console.log(response);
+        // console.log(response);
 
-        setAuthData(signUpFormData.username);
+        setAuthData(response.data.username);
         history.replace("/users");
       }).catch(err => console.log(err))
     }
@@ -375,19 +383,15 @@ export const SignUpForm = () => {
 export const EditForm = () => {
   const history = useHistory();
 
-  const { setAuthData } = useContext(authContext);
+  const { auth, setAuthData } = useContext(authContext);
 
   const [editFormData, setEditFormData] = useState({
-    username: "",
     password: "",
     passCheck: "",
   });
 
-  const [usernameErr, setUsernameErr] = useState(false);
   const [passwordErr, setPasswordErr] = useState(false);
   const [passCheckErr, setPassCheckErr] = useState(false);
-
-  let usernameErrMessage = "Username must be at least 8 characters long.";
 
   const handleInputChange = event => {
     setEditFormData({
@@ -396,9 +400,6 @@ export const EditForm = () => {
     });
 
     switch (event.target.id) {
-      case "username":
-        setUsernameErr(false);
-        break;
       case "password":
         setPasswordErr(false);
         break;
@@ -414,32 +415,30 @@ export const EditForm = () => {
   const onFormSubmit = e => {
     e.preventDefault();
 
-    // IF username is long enough
-    // IF username is already taken
-    // IF password contains Aa1!
-    // IF passcheck is the same as password
-
-    if (editFormData.username.length < 8) {
-      setPasswordErr(false);
-    }
-
     if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         editFormData.password
       )
     ) {
       setPasswordErr(true);
     }
 
-    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
+    if (editFormData.passCheck !== editFormData.password) {
+      setPassCheckErr(true);
+    }
+
+    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
       editFormData.password
-    ) && editFormData.username.length >= 8) {
+    ) && editFormData.passCheck === editFormData.password) {
       API.updateOwnerByUsername(editFormData.username, {
-
+        username: auth.data,
+        password: editFormData.password,
+        admin: false,
+        sessionData: ""
       }).then(response => {
-        console.log(response);
+        // console.log(response);
 
-        setAuthData(editFormData.username);
+        setAuthData(auth.data);
         history.replace("/users");
       }).catch(err => console.log(err))
     }
@@ -450,35 +449,17 @@ export const EditForm = () => {
       <Grid item>
         <form
           id='login-form'
-          style={{ width: "80%", margin: "auto", marginTop: 30 }}
+          style={{ width: "80%", margin: "auto", marginTop: 30, padding: 10 }}
           noValidate
           autoComplete='off'
           onSubmit={onFormSubmit}>
           <Grid direction='row' container spacing={2}>
             <Grid item xs={12}>
               <Typography variant='h2' component='h3'>
-                Edit your account
+                Edit your password below
               </Typography>
               <br />
               <Divider />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                margin='dense'
-                size='small'
-                error={usernameErr}
-                id='username'
-                label='Username'
-                value={editFormData.passCheck}
-                placeholder=''
-                helperText={usernameErr ? usernameErrMessage : " "}
-                fullWidth
-                onChange={handleInputChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant='outlined'
-              />
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -525,8 +506,8 @@ export const EditForm = () => {
                 type='submit'
                 variant='outlined'
                 color='default'
-                endIcon={<Icon>send</Icon>}>
-                Submit
+                endIcon={<Icon>save</Icon>}>
+                Save
               </Button>
             </Grid>
           </Grid>

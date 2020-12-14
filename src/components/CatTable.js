@@ -13,7 +13,7 @@ import EditIcon from "@material-ui/icons/Edit";
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
+    width: "auto",
   },
 });
 const CatTable = ({ cats, changeManagerMode, setShowModal, setDeleteCat }) => {
@@ -48,7 +48,7 @@ const CatTable = ({ cats, changeManagerMode, setShowModal, setDeleteCat }) => {
                     <IconButton
                       onClick={() => {
                         setShowModal(true);
-                        setDeleteCat(cat.name);
+                        setDeleteCat(cat.uid);
                       }}
                     >
                       <TrashIcon />

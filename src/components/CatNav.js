@@ -7,8 +7,9 @@ import Refresh from "@material-ui/icons/Refresh";
 import AddIcon from "@material-ui/icons/Add";
 import SearchIcon from "@material-ui/icons/Search";
 import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(1),
   },
@@ -25,44 +26,46 @@ const CatNav = ({ handleChange, changeManagerMode, searchText }) => {
   return (
     <Grid
       container
-      direction="row"
-      justify="space-between"
-      alignItems="center"
-      component="nav"
-      p={5}
-    >
+      direction='row'
+      justify='space-between'
+      alignItems='center'
+      component='nav'
+      p={5}>
       <Grid item xs={7}>
         <TextField
-          type="search"
-          variant="outlined"
-          margin="normal"
-          label="Find a Cat"
+          type='search'
+          variant='outlined'
+          margin='normal'
+          label='Find a Cat'
           value={searchText}
           onChange={handleChange}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start">
+              <InputAdornment position='start'>
                 <SearchIcon />
               </InputAdornment>
             ),
           }}
         />
       </Grid>
-      <Grid item container direction="row" justify="flex-end" xs={5}>
+      <Grid item container direction='row' justify='flex-end' xs={5}>
         <Grid item>
-          <IconButton onClick={() => changeManagerMode("table")}>
-            <Refresh />
-          </IconButton>
+          <Tooltip title='Refresh'>
+            <IconButton onClick={() => changeManagerMode("table")}>
+              <Refresh />
+            </IconButton>
+          </Tooltip>
         </Grid>
         <Grid item>
-          <Button
-            variant="outlined"
-            className={classes.button}
-            size="small"
-            onClick={() => changeManagerMode("add")}
-          >
-            Add
-          </Button>
+          <Tooltip title='New Cat'>
+            <Button
+              variant='outlined'
+              className={classes.button}
+              size='small'
+              onClick={() => changeManagerMode("add")}>
+              Add
+            </Button>
+          </Tooltip>
         </Grid>
       </Grid>
     </Grid>

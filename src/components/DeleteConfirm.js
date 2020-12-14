@@ -3,13 +3,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Fade from "@material-ui/core/Fade";
 import Backdrop from "@material-ui/core/Backdrop";
-import { IconButton, Typography } from "@material-ui/core";
+import { Divider, IconButton, Typography } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import Grid from "@material-ui/core/Grid";
 import Icon from "@material-ui/core/Icon";
 import Button from "@material-ui/core/Button";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   modal: {
     display: "flex",
     alignItems: "flex-start",
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DeleteConfirm = (props) => {
+const DeleteConfirm = props => {
   const classes = useStyles();
   const {
     showModal,
@@ -41,8 +41,8 @@ const DeleteConfirm = (props) => {
 
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
+      aria-labelledby='transition-modal-title'
+      aria-describedby='transition-modal-description'
       className={classes.modal}
       open={showModal}
       onClose={handleModalClose}
@@ -50,50 +50,66 @@ const DeleteConfirm = (props) => {
       BackdropComponent={Backdrop}
       BackdropProps={{
         timeout: 500,
-      }}
-    >
+      }}>
       <Fade in={showModal}>
         <div className={classes.paper}>
-          <Grid container direction="row" justify="center" alignItems="center">
-            <Grid container item justify="flex-end" xs={12}>
+          <Grid container direction='row' justify='center' alignItems='center'>
+            <Grid container item justify='flex-end' xs={12}>
               <IconButton
-                edge="end"
+                edge='end'
                 onClick={handleModalClose}
-                color="inherit"
-                size="medium"
-                aria-label="close"
-              >
+                color='inherit'
+                size='medium'
+                aria-label='close'>
                 <Close />
               </IconButton>
             </Grid>
-            <Grid item xs={12} container justify="center" alignContent="center">
-              <Typography variant="h4">
-                Are you sure you want to delete{" "}
-                {deleteMode === "account" ? "your account?" : "this cat?"}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Button
-                onClick={handleModalClose}
-                type="submit"
-                variant="outlined"
-                color="default"
-                endIcon={<Icon>close</Icon>}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  handleDelete(deleteWhere);
-                  handleModalClose();
-                }}
-                type="submit"
-                variant="outlined"
-                color="default"
-                endIcon={<Icon>check</Icon>}
-              >
-                Confirm
-              </Button>
+            <Grid
+              item
+              direction='row'
+              container
+              justify='center'
+              alignContent='center'
+              spacing={2}>
+              <Grid item xs={12} sm={8}>
+                <Typography variant='h4'>Please confirm...</Typography>
+                <Divider />
+                <br />
+                <Typography>
+                  Are you sure you want to delete{" "}
+                  {deleteMode === "account" ? "your account?" : "this cat?"}
+                </Typography>
+              </Grid>
+              <Grid
+                container
+                item
+                justify='flex-end'
+                alignItems='center'
+                spacing={2}>
+                <Grid item>
+                  <Button
+                    onClick={handleModalClose}
+                    type='submit'
+                    variant='outlined'
+                    color='default'
+                    endIcon={<Icon>close</Icon>}>
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    onClick={() => {
+                      handleDelete(deleteWhere);
+                      handleModalClose();
+                    }}
+                    type='submit'
+                    variant='outlined'
+                    color='default'
+                    endIcon={<Icon>check</Icon>}>
+                    Confirm
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </div>

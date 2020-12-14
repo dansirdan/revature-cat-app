@@ -20,14 +20,15 @@ export default {
     getCats: function(){
         return axios.get(`${this.baseURL}/cat`);
     },
+    // BROKEN IF NO CATS EXIST
     getCatsByUsername: function(owner) {
         return axios.get(`${this.baseURL}/cat?owner=${owner}`);
     },
     getCatByUID: function(UID) {
         return axios.get(`${this.baseURL}/cat?UID=${UID}`);
     },
-    updateCatByUID: function(UID, catObj) {
-        return axios.put(`${this.baseURL}/cat?UID=${UID}`, catObj);
+    updateCatByUID: function(catObj) {
+        return axios.put(`${this.baseURL}/cat`, catObj);
     },
     createCat: function(catObj) {
         return axios.post(`${this.baseURL}/cat`, catObj);

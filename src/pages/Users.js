@@ -11,38 +11,44 @@ function Users() {
   const { auth } = useContext(authContext);
 
   return (
-    <div className="page-body-content">
-      <Container maxWidth="lg">
-        <Grid container direction="row" justify="center" alignItems="center">
+    <div className='page-body-content'>
+      <Container
+        maxWidth='md'
+        style={{
+          padding: 20,
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+        }}>
+        <Grid container direction='row' justify='center' alignItems='center'>
           <Grid
             container
-            direction="column"
-            justify="center"
-            alignItems="center"
-            item
-          >
+            direction='column'
+            justify='center'
+            alignItems='center'
+            item>
             <Grid item>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography variant='h2' component='h3' gutterBottom>
+                Welcome back, <b>{auth.data}</b>
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant='subtitle1' gutterBottom>
                 Look what the cat dragged in...
               </Typography>
               <Divider />
-            </Grid>
-            <Grid item>
-              <Typography variant="h2" component="h3" gutterBottom>
-                Welcome back, <b>{auth.data}</b>
-              </Typography>
+              <br/>
             </Grid>
           </Grid>
           <Grid
             container
-            direction="row"
-            justify="center"
-            alignItems="center"
-            item
-          >
+            direction='row'
+            justify='center'
+            alignItems='center'
+            item>
             <Grid item>
               <NavLink to={"/cats"} style={{ textDecoration: "none" }}>
-                <Button variant="outlined" color="default">
+                <Button variant='outlined' color='default'>
                   Access Cats
                 </Button>
               </NavLink>

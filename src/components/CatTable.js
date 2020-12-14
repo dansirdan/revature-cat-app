@@ -36,7 +36,7 @@ const CatTable = ({ cats, changeManagerMode, setShowModal, setDeleteCat }) => {
                       <TableCell component='th' scope='row'>
                         <Avatar
                           alt={cat.name}
-                          src={`images/cat-icons/${cat.color}.png`}
+                          src={`images/cat-icons/${cat.color.toLowerCase()}.png`}
                         />
                       </TableCell>
                       <TableCell>{cat.name}</TableCell>

@@ -15,7 +15,7 @@ Explore the [project page](https://github.com/dansirdan/revature-cat-app)
 
 ## About The Project
 
-Artist Melony Mont-Eton's personal gallery site with Gallery, About, and Contact pages. The site will be fully responsive and made with React.
+Cat Collector allows any cat enthusiast to easily manage their feline companions through our cat-database application. No more wasting another one of your nine lives on an application that limits the number of cats one can own. No more worrying about the privacy of your beloved Mr. Fluffy-tinkle-kins. For thepurrrpose of using a pun, we have you covered...in cat hair.
 
 ![Project Screenshot](public/images/project-screenshot.PNG)
 
@@ -26,7 +26,6 @@ Using Material-UI to create seamless responsive design through the use of their 
 ![Mobile Phone](public/images/project-mobile-responsive.PNG)
 
 ![iPad/Tablet](public/images/project-mobile-responsive-tablet.PNG)
-
 
 ### Frontend
 
@@ -40,6 +39,14 @@ Using Material-UI to create seamless responsive design through the use of their 
 - RDS Amazon Web Services
 - Jenkins CI/CD Pipelines
 - Java Servlet RESTful API
+
+## Features
+
+- User Authentication
+- Complete CRUD capabilities on Users and Cats
+- Search your pets by name, breed, or coat color 
+
+![Cat Manager UI](public/images/cat-table.gif)
 
 ## Roadmap
 

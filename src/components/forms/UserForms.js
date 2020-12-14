@@ -8,6 +8,7 @@ import Icon from "@material-ui/core/Icon";
 import { authContext } from "../../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import API from "../../utils/API";
+import { Paper } from "@material-ui/core";
 
 export const LogoutForm = ({ handleModalClose }) => {
   const history = useHistory();
@@ -134,11 +135,14 @@ export const LoginForm = () => {
   };
 
   return (
+    <div className='page-body-content'>
+
     <Grid container direction='row' justify='center' alignItems='center' item>
       <Grid item>
+        <Paper>
         <form
           id='login-form'
-          style={{ width: "80%", margin: "auto", marginTop: 30 }}
+          style={{ width: "80%", margin: "auto", marginTop: 30, padding:20 }}
           noValidate
           autoComplete='off'
           onSubmit={onFormSubmit}>
@@ -203,8 +207,10 @@ export const LoginForm = () => {
             </Grid>
           </Grid>
         </form>
+        </Paper>
       </Grid>
     </Grid>
+    </div>
   );
 };
 
@@ -290,11 +296,14 @@ export const SignUpForm = () => {
   };
 
   return (
+    <div className='page-body-content'>
+
     <Grid container direction='row' justify='center' alignItems='center' item>
       <Grid item>
+        <Paper>
         <form
           id='login-form'
-          style={{ width: "80%", margin: "auto", marginTop: 30 }}
+          style={{ width: "80%", margin: "auto", marginTop: 30, padding: 20 }}
           noValidate
           autoComplete='off'
           onSubmit={onFormSubmit}>
@@ -375,8 +384,10 @@ export const SignUpForm = () => {
             </Grid>
           </Grid>
         </form>
+        </Paper>
       </Grid>
     </Grid>
+    </div>
   );
 };
 

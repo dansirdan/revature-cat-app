@@ -8,6 +8,7 @@ import { CatCreateForm, CatEditForm } from "../components/forms/CatForms";
 import DeleteConfirm from "../components/DeleteConfirm";
 import API from "../utils/API";
 import { authContext } from "../contexts/AuthContext";
+import Fade from "@material-ui/core/Fade";
 
 function Cats() {
   const { auth } = useContext(authContext);
@@ -125,36 +126,38 @@ function Cats() {
           alignItems: "flex-start",
           justifyContent: "center",
         }}>
-        <Grid
-          container
-          direction='row'
-          justify='center'
-          alignItems='center'
-          item>
-          <Grid item>
-            <Typography variant='h2' component='h1'>
-              Cat Manager
-            </Typography>
+        <Fade in={true}>
+          <Grid
+            container
+            direction='row'
+            justify='center'
+            alignItems='center'
+            item>
+            <Grid item>
+              <Typography variant='h2' component='h1'>
+                Cat Manager
+              </Typography>
+            </Grid>
+            <Grid item style={{ width: "100%" }}>
+              <CatNav
+                handleChange={handleChange}
+                changeManagerMode={changeManagerMode}
+                searchText={searchText}
+              />
+            </Grid>
+            <Grid item>
+              <br />
+              {renderView()}
+            </Grid>
           </Grid>
-          <Grid item style={{ width: "100%" }}>
-            <CatNav
-              handleChange={handleChange}
-              changeManagerMode={changeManagerMode}
-              searchText={searchText}
-            />
-          </Grid>
-          <Grid item>
-            <br />
-            {renderView()}
-          </Grid>
-        </Grid>
-        <DeleteConfirm
-          showModal={showModal}
-          handleModalClose={handleModalClose}
-          deleteMode='cat'
-          handleDelete={handleDelete}
-          deleteWhere={deleteCat}
-        />
+          <DeleteConfirm
+            showModal={showModal}
+            handleModalClose={handleModalClose}
+            deleteMode='cat'
+            handleDelete={handleDelete}
+            deleteWhere={deleteCat}
+          />
+        </Fade>
       </Container>
     </div>
   );

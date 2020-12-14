@@ -6,7 +6,7 @@ import Divider from "@material-ui/core/Divider";
 import DeleteConfirm from "../components/DeleteConfirm";
 import Icon from "@material-ui/core/Icon";
 import { authContext } from "../contexts/AuthContext";
-import { Button } from "@material-ui/core";
+import { Button, Fade } from "@material-ui/core";
 import API from "../utils/API";
 import { useHistory } from "react-router-dom";
 
@@ -33,6 +33,7 @@ const AccountSettings = () => {
 
   return (
     <div className='page-body-content'>
+      <Fade in={true}>
       <Grid
         direction='row'
         container
@@ -82,6 +83,7 @@ const AccountSettings = () => {
           deleteWhere={auth.data}
         />
       </Grid>
+      </Fade>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default {
-    baseURL: "http://localhost:8080/CatCollectorServer",
+    baseURL: "http://52.14.32.218:8080/catCollectorServer",
     getOwners: function(){
         return axios.get(`${this.baseURL}/owner`);
     },

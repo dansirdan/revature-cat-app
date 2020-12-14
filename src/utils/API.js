@@ -1,11 +1,11 @@
 import axios from "axios";
 
 export default {
-    baseURL: "http://localhost:8080/CatCollectorServer",
+    baseURL: "http://52.14.32.218:8080/catCollectorServer",
     getOwners: function(){
         return axios.get(`${this.baseURL}/owner`);
     },
-    getOwnersByUsername: function(username) {
+    getOwnerByUsername: function(username) {
         return axios.get(`${this.baseURL}/owner?username=${username}`);
     },
     updateOwnerByUsername: function(username, userObj) {
@@ -20,14 +20,15 @@ export default {
     getCats: function(){
         return axios.get(`${this.baseURL}/cat`);
     },
+    // BROKEN IF NO CATS EXIST
     getCatsByUsername: function(owner) {
         return axios.get(`${this.baseURL}/cat?owner=${owner}`);
     },
     getCatByUID: function(UID) {
         return axios.get(`${this.baseURL}/cat?UID=${UID}`);
     },
-    updateCatByUID: function(UID, catObj) {
-        return axios.put(`${this.baseURL}/cat?UID=${UID}`, catObj);
+    updateCatByUID: function(catObj) {
+        return axios.put(`${this.baseURL}/cat`, catObj);
     },
     createCat: function(catObj) {
         return axios.post(`${this.baseURL}/cat`, catObj);

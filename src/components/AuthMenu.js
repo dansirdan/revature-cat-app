@@ -4,7 +4,16 @@ import Menu from "@material-ui/core/Menu";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MenuItem from "@material-ui/core/MenuItem";
 import { authContext } from "../contexts/AuthContext";
-import AuthModal from "./AuthModal";
+import LogoutModal from "./LogoutModal";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import { Link } from "react-router-dom";
+import {
+  ExitToApp,
+  VpnKey,
+  PermIdentity,
+  Settings,
+  Close,
+} from "@material-ui/icons";
 
 export default function AuthMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -12,7 +21,7 @@ export default function AuthMenu() {
   const [authType, setAuthType] = useState("");
   const { auth } = useContext(authContext);
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -20,7 +29,7 @@ export default function AuthMenu() {
     setAnchorEl(null);
   };
 
-  const handleAuthChoice = type => {
+  const handleAuthChoice = (type) => {
     setAnchorEl(null);
     setShow(true);
     setAuthType(type);
@@ -33,32 +42,67 @@ export default function AuthMenu() {
   return (
     <div>
       <Button
-        aria-controls='auth-menu'
-        aria-haspopup='true'
-        onClick={handleClick}>
+        aria-controls="auth-menu"
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
         <ExpandMoreIcon />
         Account
       </Button>
-      <Menu
-        id='auth-menu'
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}>
-        {auth.data ? (
-          ""
-        ) : (
-          <MenuItem onClick={() => handleAuthChoice("signup")}>
+      {auth.data ? (
+        <Menu
+          id="auth-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem
+            component={Link}
+            to="/settings"
+            onClick={() => handleClose()}
+          >
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            Settings
+          </MenuItem>
+          <MenuItem onClick={() => handleAuthChoice("logout")}>
+            <ListItemIcon>
+              <ExitToApp />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+          <MenuItem onClick={() => handleClose()}>
+            <ListItemIcon>
+              <Close />
+            </ListItemIcon>
+            Close
+          </MenuItem>
+        </Menu>
+      ) : (
+        <Menu
+          id="auth-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem component={Link} to="/login" onClick={() => handleClose()}>
+            <ListItemIcon>
+              <VpnKey />
+            </ListItemIcon>
+            Login
+          </MenuItem>
+          <MenuItem component={Link} to="/signup" onClick={() => handleClose()}>
+            <ListItemIcon>
+              <PermIdentity />
+            </ListItemIcon>
             Sign Up
           </MenuItem>
-        )}
-        {auth.data ? (
-          <MenuItem onClick={() => handleAuthChoice("logout")}>Logout</MenuItem>
-        ) : (
-          <MenuItem onClick={() => handleAuthChoice("login")}>Login</MenuItem>
-        )}
-      </Menu>
-      <AuthModal
+        </Menu>
+      )}
+      <LogoutModal
         showModal={show}
         authType={authType}
         handleModalClose={handleModalClose}
